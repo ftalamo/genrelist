@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Dropdown Multi selección de genero</title>
+
+<!-- CSS de Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  #multiSelect {
+    width: 300px;
+  }
+</style>
+</head>
+<body>
+
+<h2>Selecciona uno o más géneros </h2>
+
+<select id="multiSelect" multiple="multiple"></select>
+
+<!-- JS de jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- JS de Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $('#multiSelect').select2({
+      placeholder: "Cargando opciones desde generos.csv...",
+      allowClear: true
+    });
+
+    fetch('generos.csv')
+      .then(response => {
+        if (!response.ok) throw new Error("No se pudo cargar generos.csv");
+        return response.text();
+      })
+      .then(text => {
+        const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+
+        $('#multiSelect').empty();
+
+        lines.forEach(function(line) {
+          const option = new Option(line.trim(), line.trim(), false, false);
+          $('#multiSelect').append(option);
+        });
+
+        $('#multiSelect').trigger('change');
+        $('#multiSelect').select2({
+          placeholder: "Selecciona uno o más géneros",
+          allowClear: true
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        alert("Error cargando generos.csv. Asegúrate que el archivo esté en la misma carpeta que este HTML y que se pueda leer.");
+      });
+  });
+</script>
+
+</body>
+</html>
